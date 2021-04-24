@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">RandomCats</string>
+    <string name="button_text">Nächste Katze</string>
+</resources>
