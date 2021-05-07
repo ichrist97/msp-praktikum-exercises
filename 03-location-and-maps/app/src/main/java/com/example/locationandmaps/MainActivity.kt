@@ -46,9 +46,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        getLastLocation()
+        
     }
 
     /**
@@ -65,30 +63,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         googleMap.setOnMyLocationButtonClickListener(this)
         googleMap.setOnMyLocationClickListener(this)
         enableMyLocation()
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun getLastLocation() {
-        if (checkPermissions()) {
-            if (isLocationEnabled()) {
-
-                mFusedLocationClient.lastLocation.addOnCompleteListener(this) { task ->
-                    var location: Location? = task.result
-                    if (location == null) {
-                        requestNewLocationData()
-                    } else {
-                        findViewById<TextView>(R.id.latTextView).text = location.latitude.toString()
-                        findViewById<TextView>(R.id.lonTextView).text = location.longitude.toString()
-                    }
-                }
-            } else {
-                Toast.makeText(this, "Turn on location", Toast.LENGTH_LONG).show()
-                val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                startActivity(intent)
-            }
-        } else {
-            requestPermissions()
-        }
     }
 
     /**
