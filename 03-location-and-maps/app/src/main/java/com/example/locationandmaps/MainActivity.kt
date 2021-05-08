@@ -15,9 +15,13 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 
 import android.location.Location
 import android.location.LocationManager
+import android.util.Log
+import android.widget.Button
+import android.widget.EditText
 import com.example.locationandmaps.PermissionUtils.PermissionDeniedDialog.Companion.newInstance
 import com.example.locationandmaps.PermissionUtils.isPermissionGranted
 import com.example.locationandmaps.PermissionUtils.requestPermission
@@ -30,14 +34,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     GoogleMap.OnMyLocationClickListener {
 
     private lateinit var map: GoogleMap
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    //private val prefs = this@MainActivity.getPreferences(getString(R.string.prefs), 0)
+
+
 
     /**
      * Flag indicating whether a requested permission has been denied after returning in
      * [.onRequestPermissionsResult].
      */
     private var permissionDenied = false
-
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +52,30 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-        
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        initInterface()
+    }
+
+    @SuppressLint("MissingPermission")
+    fun initInterface() {
+        val btnCreateMarker: Button = findViewById(R.id.btnCreateMarker)
+        val editMarkerText: EditText = findViewById(R.id.editMarkerName)
+        btnCreateMarker.setOnClickListener {
+            Log.d("Main", "Created marker")
+                    fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                        if (location != null) {
+                            val coordinates = LatLng(location.latitude, location.longitude)
+                            val title = editMarkerText.text.toString()
+                            map.addMarker(MarkerOptions().position(coordinates).title(title).draggable(true))
+                        }
+                    }
+        }
+    }
+
+    fun saveMarker() {
+
     }
 
     /**
@@ -89,7 +118,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     override fun onMyLocationClick(location: Location) {
-        Toast.makeText(this, "Current location:\n$location", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "Current location:\n ${location.latitude}, ${location.longitude}", Toast.LENGTH_LONG).show()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

@@ -3,4 +3,5 @@
     <string name="location_permission_denied">Berechtigung nicht erteilt</string>
     <string name="permission_required_toast">Berechtigung wird benötigt</string>
     <string name="permission_rationale_location">Erteilen sie die Berechtigung</string>
+    <string name="prefs">Prefs</string>
 </resources>
